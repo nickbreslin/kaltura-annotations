@@ -1,16 +1,27 @@
 <template>
-  <div class="row">
-    <div class="col-4">
-      <Chapters :chapters="chapters" @setSeconds="setSeconds($event)" />
-    </div>
-    <div class="col-8">
-      <Viewer :seconds="seconds" />
-      <textarea
-        class="form-control mt-5"
-        rows="10"
-        v-model="description"
-      ></textarea>
-      <small>Each chapter needs the format:<br />00:00 Chapter Title</small>
+  <div>
+    <div class="row">
+      <div class="col-8">
+        <Viewer :seconds="seconds" />
+
+        <textarea
+          class="form-control mt-5"
+          rows="10"
+          v-model="description"
+        ></textarea>
+        <small
+          >Each chapter needs the format:<br />00:00 - Chapter Title -
+          Annotation</small
+        >
+      </div>
+      <div class="col-4">
+        <div class="h3 fw-bold">Annotations</div>
+        <Chapters
+          v-if="chapters.length"
+          :chapters="chapters"
+          @setSeconds="setSeconds($event)"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -26,7 +37,7 @@ export default {
   data() {
     return {
       description: "",
-      seconds: 0,
+      seconds: 0
     };
   },
   computed: {
@@ -34,7 +45,7 @@ export default {
       let lines = this.description.split("\n");
 
       lines = lines.filter((line) => {
-        let timestamp = line.split(" ");
+        let timestamp = line.split("-");
         if (timestamp.length < 2) {
           return false;
         }
@@ -50,10 +61,12 @@ export default {
     },
     chapters() {
       let chapters = this.validLines.map((line) => {
-        const parts = line.split(" ");
+        const parts = line.split("-");
         let timestamp = parts.shift();
-        let label = parts.join(" ");
+        let label = parts.shift();
+        let body = parts.join(" ");
         label = label.trim();
+        body = body.trim();
 
         const timeParts = timestamp.split(":");
 
@@ -65,16 +78,18 @@ export default {
         return {
           seconds: totalSeconds,
           label: label,
+          timestamp: timestamp,
+          body: body
         };
       });
 
       return chapters;
-    },
+    }
   },
   methods: {
     setSeconds(seconds) {
       this.seconds = seconds;
-    },
-  },
+    }
+  }
 };
 </script>

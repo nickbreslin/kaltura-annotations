@@ -12,6 +12,6 @@ import TheFooter from "@/components/layout/TheFooter";
 
 export default {
   name: "Home",
-  components: { TheHeader, TheFooter },
+  components: { TheHeader, TheFooter }
 };
 </script>
